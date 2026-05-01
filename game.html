@@ -235,7 +235,49 @@ function isDiffHost() {
 			if (typeof firebaseConfig === 'undefined') return;
 				firebase.analytics().logEvent(event_name, event_param);			
 		}
-	</script>
+	</script> 
+<div id="modMenu" style="position: fixed; top: 10px; right: 10px; width: 220px; background: rgba(20, 20, 20, 0.95); border: 2px solid #ff4444; color: white; font-family: 'Fredoka', sans-serif; z-index: 10000; padding: 15px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); display: block;">
+    <h3 style="margin: 0 0 10px 0; color: #ff4444; text-align: center; font-size: 18px;">ESCAPE MODS</h3>
+    
+    <div style="margin-bottom: 10px;">
+        <button onclick="tryMod('SetSpeed', 50)" style="width: 100%; padding: 8px; background: #333; color: white; border: 1px solid #555; cursor: pointer; margin-bottom: 5px;">⚡ Super Speed</button>
+        <button onclick="tryMod('AddCoins', 99999)" style="width: 100%; padding: 8px; background: #333; color: white; border: 1px solid #555; cursor: pointer; margin-bottom: 5px;">💰 Add 100k Coins</button>
+        <button onclick="tryMod('SpawnBumper', 1)" style="width: 100%; padding: 8px; background: #333; color: white; border: 1px solid #555; cursor: pointer; margin-bottom: 5px;">🛡️ Spawn Bumper</button>
+        <button onclick="tryMod('ActivateGravityGun', 1)" style="width: 100%; padding: 8px; background: #333; color: white; border: 1px solid #555; cursor: pointer;">🔫 Gravity Gun</button>
+    </div>
+
+    <p style="font-size: 10px; color: #888; text-align: center; margin: 0;">Press 'H' to Hide Menu</p>
+</div>
+
+<script>
+    // This function tries to talk to the Unity Engine
+    function tryMod(methodName, value) {
+        if (window.unityInstance) {
+            console.log("Sending " + methodName + " to Game...");
+            
+            /* UNITY BRIDGE:
+               Unity uses (ObjectName, MethodName, Value). 
+               Since we don't know the exact ObjectName inside the game, 
+               we try common ones like 'GameManager', 'Player', or 'Car'.
+            */
+            window.unityInstance.SendMessage('GameManager', methodName, value);
+            window.unityInstance.SendMessage('Player', methodName, value);
+            window.unityInstance.SendMessage('Car', methodName, value);
+            
+            alert("Attempted to trigger: " + methodName);
+        } else {
+            alert("Game is still loading... wait for it to finish!");
+        }
+    }
+
+    // Toggle Menu with 'H' key
+    document.addEventListener('keydown', function(e) {
+        if (e.key.toLowerCase() === 'h') {
+            var menu = document.getElementById('modMenu');
+            menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
+        }
+    });
+</script>
 	
 </body>	
 </html>
